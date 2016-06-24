@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="site" default="build-app" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant" xmlns:rsel="antlib:org.apache.tools.ant.types.resources.selectors">
+
+	<!-- import the ant / maven integration tasks -->
+	<path id="maven-ant-tasks.classpath" path="../lib/maven-ant-tasks-2.1.3.jar" />
+	<typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="antlib:org.apache.maven.artifact.ant" classpathref="maven-ant-tasks.classpath" />
+
+	<property name="project.mycompany" location="../../" />
+	<property name="project.name" value="site" />
+
+	<!-- See the following URL for a description of this property file strategy -->
+	<!-- The only difference is we prepend a . for the home directory property files -->
+	<!-- http://www.javaranch.com/ant/properties.jsp -->
+	<property file="${user.home}/.${project.name}.properties" />
+	<property file="${user.home}/.build.properties" />
+	<property name="config.filename" value="${user.name}.properties" />
+	<property file="config/${config.filename}" />
+	 <property environment="env"/>
+	<property file="../build.properties" />
+
+	<property name="runtime.environment" value="development" />
+
+	<!-- Project Reference Targets -->
+	<!-- build the application and create the war artifact -->
+	<target name="build-app">
+		<delete dir="war/WEB-INF/lib" />
+		<artifact:mvn mavenHome="${maven.home}" fork="true">
+			<arg value="-Dmaven.test.skip=true" />
+			<arg value="install" />
+		</artifact:mvn>
+	</target>
+
+	<!-- Deploy to Tomcat -->
+		<target name="deploy-tomcat" >
+			<echo message="${env.SITE_HOME}"/>
+			<property name="warFile" location="target/mycompany.war"/>
+			<delete dir="${env.SITE_HOME}/webapps/mycompany" quiet="true"/>
+			<delete dir="${env.SITE_HOME}/webapps/mycompany.war" quiet="true"/>
+			<copy todir="${env.SITE_HOME}/webapps" file="${warFile}" overwrite="true"/>
+			<echo message="${warFile}"/>
+		</target>
+		<!-- End of Deploy to Tomcat -->
+
+	<!-- Export JSP To Tomcat server -->
+		<target name="sync-ressources-with-tomcat">
+			       <echo message="syn  html ressources files with webapp.." />
+			         <sync todir="${env.SITE_HOME}/webapps/mycompany/WEB-INF/templates" includeEmptyDirs="true" overwrite="true">
+			            <fileset dir="src/main/webapp/WEB-INF/templates"></fileset>
+			         </sync>
+			        <echo message="end  syn  html ressources files with webapp.." />
+			        
+			        <echo message="syn all css ressources files with webapp" />
+			         <sync todir="${env.SITE_HOME}/webapps/mycompany/css" includeEmptyDirs="true" overwrite="true">
+			            <fileset dir="src/main/webapp/css"></fileset>
+			         </sync>
+			        <echo message="end  syn css  ressources files with webapp.." />
+			        
+			         <echo message="syn all font ressources files with webapp" />
+			         <sync todir="${env.SITE_HOME}/webapps/mycompany/fonts" includeEmptyDirs="true" overwrite="true">
+			            <fileset dir="src/main/webapp/fonts"></fileset>
+			         </sync>
+			        <echo message="end  syn font ressources files with webapp.." />
+			        
+			         <echo message="syn all js ressources files with webapp" />
+			         <sync todir="${env.SITE_HOME}/webapps/mycompany/js" includeEmptyDirs="true" overwrite="true">
+			            <fileset dir="src/main/webapp/js"></fileset>
+			         </sync>
+			        <echo message="end  syn js ressources files with webapp.." />
+					
+			         
+			        
+			        
+			         <echo message="syn all img ressources files with webapp" />
+			         <sync todir="${env.SITE_HOME}/webapps/mycompany/img" includeEmptyDirs="true" overwrite="true">
+			            <fileset dir="src/main/webapp/img"></fileset>
+			         </sync>
+			        <echo message="end  syn img ressources files with webapp.." />
+			
+			                     <echo message="syn all images ressources files with webapp" />
+						         <sync todir="${env.SITE_HOME}/webapps/mycompany/images" includeEmptyDirs="true" overwrite="true">
+						            <fileset dir="src/main/webapp/images"></fileset>
+						         </sync>
+						        <echo message="end  syn images ressources files with webapp.." />
+						
+			        
+			      <!--  <echo message="syn all less ressources files with webapp" />
+			         <sync todir="${env.SITE_HOME}/webapps/mycompany/less" includeEmptyDirs="true" overwrite="true">
+			            <fileset dir="src/main/webapp/less"></fileset>
+			         </sync>
+			        <echo message="end  syn less ressources files with webapp.." />-->
+			
+		</target>
+		<!-- End of Export JSP To Tomcat server -->
+	
+</project>

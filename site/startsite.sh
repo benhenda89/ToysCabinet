@@ -18,8 +18,6 @@ cd $cwd
 # Ensure that the spring-instrument jar gets downloaded and moved into target
 mvn dependency:copy@copy-agent
 
-# Start up the embedded HSQLDB database in the background. If it's already started this won't do anything
-mvn antrun:run@hsqldb-start &
 
 # grab the path to the JRebel agent and set up a JREBEL_AGENT variable to pass to the JVM
 if [ -z ${JREBEL_PATH+x} ]; then JREBEL_AGENT=""; else JREBEL_AGENT="-agentpath:$JREBEL_PATH"; fi
@@ -31,4 +29,4 @@ if [ -z ${TOMCAT_MEMORY+x} ]; then TOMCAT_MEMORY="-Xmx1536M -XX:MaxPermSize=512M
 
 export BROADLEAF_OPTS="$TOMCAT_MEMORY -Xdebug -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=n -javaagent:target/agents/spring-instrument.jar $JREBEL_AGENT"
 
-MAVEN_OPTS="$MAVEN_OPTS $BROADLEAF_OPTS" mvn tomcat7:run-war
+MAVEN_OPTS="$MAVEN_OPTS $BROADLEAF_OPTS" mvn tomcat:run-war
